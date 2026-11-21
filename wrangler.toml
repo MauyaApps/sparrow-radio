@@ -19,7 +19,7 @@ binding = "DB"
 database_name = "sparrow-radio-db"
 # Replace with the real id printed by `wrangler d1 create sparrow-radio-db` before deploying.
 # Local development (`--local`) works with this placeholder.
-database_id = "00000000-0000-0000-0000-000000000000"
+database_id = "58a47eca-2283-4f35-b6a5-5d917d06ec37"
 migrations_dir = "migrations"
 
 [vars]
