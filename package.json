@@ -1,0 +1,25 @@
+{
+  "name": "sparrow-radio",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "db:migrate:local": "wrangler d1 migrations apply sparrow-radio-db --local",
+    "db:seed:local": "wrangler d1 execute sparrow-radio-db --local --file=seed/dev.sql",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "db:migrations:apply": "wrangler d1 migrations apply DB --remote",
+    "deploy": "npm run db:migrations:apply && wrangler deploy"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261121.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1",
+    "wrangler": "^4.166.0"
+  },
+  "dependencies": {
+    "graphql": "^17.1.0",
+    "graphql-yoga": "^6.1.0"
+  }
+}

@@ -1,0 +1,14 @@
+/* Sparrow Radio design tokens, taken from the approved icon and banner */
+:root {
+  --sr-bg-start: #0C3A28;
+  --sr-bg-end:   #051A12;
+  --sr-surface:  #0E4A31;
+  --sr-green-300: #B9F5C6;
+  --sr-green-400: #6FD79B;
+  --sr-green-500: #4FCB84;
+  --sr-green-600: #2FA866;
+  --sr-lime-200:  #E4EC8A;
+  --sr-text:      #E8FBEF;
+  --sr-text-muted:#7FD6A4;
+  --sr-font: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+}

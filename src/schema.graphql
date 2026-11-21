@@ -1,0 +1,84 @@
+enum StreamKind { HOT COLD }
+
+enum ContentType { MUSIC CONVERSATION MIXED }
+
+enum Category {
+  MUSIC
+  TALK_SHOW
+  PODCAST
+  INTERVIEW
+  NEWS
+  COMEDY
+  EDUCATIONAL
+  DEBATE
+}
+
+enum StreamSort { POPULAR RATING NEWEST }
+
+type Stream {
+  id: ID!
+  name: String!
+  kind: StreamKind!
+  contentType: ContentType!
+  category: Category!
+  conversationTopic: String
+  "True when the stream contains speech (CONVERSATION or MIXED)."
+  isConversation: Boolean!
+  description: String!
+  "External audio source (Icecast, HLS or file). Audio hosting comes in a later phase."
+  sourceUrl: String
+  listeners: Int!
+  "Average rating 0..5, 0 when nobody rated yet."
+  rating: Float!
+  ownerId: ID!
+  createdAt: String!
+}
+
+type StreamPage {
+  items: [Stream!]!
+  total: Int!
+  page: Int!
+  pageSize: Int!
+}
+
+input CreateStreamInput {
+  name: String!
+  kind: StreamKind!
+  contentType: ContentType!
+  category: Category!
+  description: String
+  conversationTopic: String
+  sourceUrl: String
+}
+
+type CreateStreamPayload {
+  stream: Stream!
+  "Non-blocking recommendations, e.g. a missing topic for a talk show."
+  warnings: [String!]!
+}
+
+type Query {
+  streams(
+    contentType: ContentType
+    category: Category
+    kind: StreamKind
+    sort: StreamSort = POPULAR
+    page: Int = 1
+    pageSize: Int = 12
+  ): StreamPage!
+
+  search(
+    query: String!
+    contentType: ContentType
+    category: Category
+    sort: StreamSort = POPULAR
+    page: Int = 1
+    pageSize: Int = 12
+  ): StreamPage!
+
+  stream(id: ID!): Stream
+}
+
+type Mutation {
+  createStream(input: CreateStreamInput!): CreateStreamPayload!
+}
