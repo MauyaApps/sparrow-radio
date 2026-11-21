@@ -1,0 +1,14 @@
+@import "tailwindcss";
+@theme {
+  --color-sr-surface: #0e4a31;
+  --color-sr-green: #4fcb84;
+  --color-sr-mint: #b9f5c6;
+  --color-sr-lime: #e4ec8a;
+  --color-sr-text: #e8fbef;
+  --color-sr-muted: #7fd6a4;
+  --font-sans: Inter, "Segoe UI", Helvetica, Arial, sans-serif;
+}
+body { margin: 0; min-height: 100vh; color: var(--color-sr-text);
+  background: linear-gradient(160deg, #0c3a28, #051a12) fixed; }
+/* Lazy rendering of off-screen cards */
+.lazy-card { content-visibility: auto; contain-intrinsic-size: 170px; }

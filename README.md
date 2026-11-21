@@ -37,3 +37,9 @@ mutation { createStream(input: { name: "My Show", kind: HOT, contentType: CONVER
 - `isConversation` is true for CONVERSATION and MIXED
 
 `design/` holds the approved icon, banner and colour tokens for the interface step.
+
+## Interface (web/)
+React 18 + Tailwind + Apollo, served by the same Worker (one URL, no CORS).
+- Build for deploy: `npm run build:web`. In Cloudflare Workers Builds set **Build command** to `npm run build:web`; Deploy command stays `npm run deploy`.
+- Local: terminal 1 `npm run build:web && npm run dev`; terminal 2 `cd web && npm run dev` (http://localhost:5173, proxies /graphql to the API; uses the dev user, needs `.dev.vars`).
+- Not built yet: live chat, likes/ratings, real audio hosting, Sparrow login.
