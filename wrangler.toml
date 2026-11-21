@@ -2,13 +2,11 @@ name = "sparrow-radio-api"
 main = "src/index.ts"
 compatibility_date = "2025-01-01"
 
-# .graphql files are bundled as plain text
 [[rules]]
 type = "Text"
 globs = ["**/*.graphql"]
 fallthrough = true
 
-# The React interface (web/dist) is served by the same Worker; only /graphql runs code first.
 [assets]
 directory = "./web/dist"
 not_found_handling = "single-page-application"
@@ -17,11 +15,8 @@ run_worker_first = ["/graphql"]
 [[d1_databases]]
 binding = "DB"
 database_name = "sparrow-radio-db"
-# Replace with the real id printed by `wrangler d1 create sparrow-radio-db` before deploying.
-# Local development (`--local`) works with this placeholder.
 database_id = "58a47eca-2283-4f35-b6a5-5d917d06ec37"
 migrations_dir = "migrations"
 
 [vars]
-# Production default: no header-based dev login. For local work copy .dev.vars.example to .dev.vars.
 ALLOW_DEV_AUTH = "false"
