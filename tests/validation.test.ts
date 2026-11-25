@@ -79,4 +79,10 @@ describe("buildStreamQuery", () => {
     expect(clampPaging(0, 9999)).toEqual({ page: 1, pageSize: 50, offset: 0 });
     expect(clampPaging(3, 12).offset).toBe(24);
   });
+
+  it("public listings exclude hidden and closed streams", () => {
+    const q = buildStreamQuery({});
+    expect(q.listSql).toContain("status = 'LIVE'");
+    expect(q.countSql).toContain("status = 'LIVE'");
+  });
 });

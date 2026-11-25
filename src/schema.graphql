@@ -15,6 +15,24 @@ enum Category {
 
 enum StreamSort { POPULAR RATING NEWEST }
 
+enum StreamStatus { LIVE HIDDEN CLOSED }
+
+type ChatMessage {
+  id: ID!
+  streamId: ID!
+  userId: ID!
+  body: String!
+  createdAt: String!
+}
+
+type StreamReport {
+  id: ID!
+  streamId: ID!
+  userId: ID!
+  reason: String!
+  createdAt: String!
+}
+
 type Stream {
   id: ID!
   name: String!
@@ -31,6 +49,7 @@ type Stream {
   "Average rating 0..5, 0 when nobody rated yet."
   rating: Float!
   ownerId: ID!
+  status: StreamStatus!
   createdAt: String!
 }
 
@@ -77,8 +96,22 @@ type Query {
   ): StreamPage!
 
   stream(id: ID!): Stream
+  chatMessages(streamId: ID!, pageSize: Int = 50): [ChatMessage!]!
+  reports(pageSize: Int = 50): [StreamReport!]!
 }
 
 type Mutation {
   createStream(input: CreateStreamInput!): CreateStreamPayload!
+  updateStream(id: ID!, sourceUrl: String, description: String): Stream!
+  deleteStream(id: ID!): Boolean!
+  setStreamStatus(id: ID!, status: StreamStatus!): Stream!
+  rateStream(id: ID!, value: Int!): Stream!
+  joinStream(id: ID!, clientId: String!): Stream!
+  heartbeatStream(id: ID!, clientId: String!): Stream!
+  leaveStream(id: ID!, clientId: String!): Stream!
+  sendChatMessage(streamId: ID!, body: String!): ChatMessage!
+  deleteChatMessage(id: ID!): Boolean!
+  reportStream(streamId: ID!, reason: String!): Boolean!
+  moderateStream(id: ID!, status: StreamStatus!, note: String!): Stream!
+  resolveReport(id: ID!): Boolean!
 }

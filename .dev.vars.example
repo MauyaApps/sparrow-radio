@@ -1,1 +1,5 @@
 ALLOW_DEV_AUTH=true
+# For Sparrow Account login in local development, set these from the local
+# account API's GET /v1/keys response. Keep ALLOW_DEV_AUTH true only locally.
+ACCOUNT_ISSUER=https://sparrow-account-api.sparrownet.workers.dev
+ACCOUNT_PUBLIC_KEY=

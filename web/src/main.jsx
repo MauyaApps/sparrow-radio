@@ -1,14 +1,41 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
-import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloProvider, HttpLink, InMemoryCache, from } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { onError } from "@apollo/client/link/error";
+import { Observable } from "@apollo/client/utilities";
 import App from "./App.jsx";
 import "./index.css";
+import { freshAccessToken, refreshSession } from "./auth";
 
-// Dev only: act as a test user (needs ALLOW_DEV_AUTH=true in .dev.vars of the API).
-const headers = import.meta.env.DEV ? { "x-sparrow-user": "dev" } : {};
+const authLink = setContext(async (_, previousContext) => {
+  const token = await freshAccessToken();
+  return token
+    ? { ...previousContext, headers: { ...previousContext.headers, authorization: `Bearer ${token}` } }
+    : previousContext;
+});
+const refreshLink = onError(({ graphQLErrors, operation, forward }) => {
+  const unauthenticated = graphQLErrors?.some((error) => error.extensions?.code === "UNAUTHENTICATED");
+  if (!unauthenticated || operation.getContext().authRetry) return;
+  return new Observable((observer) => {
+    refreshSession().then((token) => {
+      if (!token) {
+        window.location.assign("/account");
+        observer.complete();
+        return;
+      }
+      operation.setContext(({ headers = {} }) => ({
+        authRetry: true,
+        headers: { ...headers, authorization: `Bearer ${token}` },
+      }));
+      forward(operation).subscribe(observer);
+    }).catch((error) => observer.error(error));
+  });
+});
+const httpLink = new HttpLink({ uri: "/graphql" });
 const client = new ApolloClient({
-  link: new HttpLink({ uri: "/graphql", headers }),
+  link: from([refreshLink, authLink, httpLink]),
   cache: new InMemoryCache(),
 });
 

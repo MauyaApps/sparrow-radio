@@ -1,6 +1,7 @@
 import { createSchema, createYoga } from "graphql-yoga";
 import typeDefs from "./schema.graphql";
 import { resolvers, type Context, type Env } from "./resolvers";
+import { userIdFromRequest } from "./auth";
 
 const yoga = createYoga<{ env: Env }, Context>({
   schema: createSchema({ typeDefs, resolvers }),
@@ -10,8 +11,8 @@ const yoga = createYoga<{ env: Env }, Context>({
   maskedErrors: true,
   context: ({ request, env }) => ({
     env,
-    // DEV ONLY until Sparrow account login exists. Never enabled in production.
-    userId: env.ALLOW_DEV_AUTH === "true" ? request.headers.get("x-sparrow-user") : null,
+    userId: userIdFromRequest(request, env),
+    moderatorToken: request.headers.get("x-radio-moderator-token"),
   }),
 });
 
@@ -24,5 +25,13 @@ export default {
       });
     }
     return yoga.fetch(request, { env });
+  },
+
+  scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext): void {
+    ctx.waitUntil(
+      env.DB.prepare(
+        "DELETE FROM stream_presence WHERE julianday(last_seen_at) <= julianday('now', '-90 seconds')",
+      ).run(),
+    );
   },
 } satisfies ExportedHandler<Env>;

@@ -31,7 +31,7 @@ export function clampPaging(page?: number | null, pageSize?: number | null) {
 }
 
 export function buildStreamQuery(f: StreamFilters) {
-  const where: string[] = [];
+  const where: string[] = ["status = 'LIVE'"];
   const binds: (string | number)[] = [];
 
   if (f.contentType) { where.push("content_type = ?"); binds.push(f.contentType); }
@@ -42,7 +42,7 @@ export function buildStreamQuery(f: StreamFilters) {
   if (text) {
     const like = `%${escapeLike(text)}%`;
     where.push(
-      "(name LIKE ? ESCAPE '\\' OR description LIKE ? ESCAPE '\\' OR conversation_topic LIKE ? ESCAPE '\\')",
+      "(name LIKE ? ESCAPE '\\\\' OR description LIKE ? ESCAPE '\\\\' OR conversation_topic LIKE ? ESCAPE '\\\\')",
     );
     binds.push(like, like, like);
   }
@@ -54,7 +54,7 @@ export function buildStreamQuery(f: StreamFilters) {
   return {
     page,
     pageSize,
-    listSql: `SELECT * FROM streams ${whereSql} ORDER BY ${order} LIMIT ? OFFSET ?`,
+    listSql: `SELECT streams.*, (SELECT COUNT(*) FROM stream_presence p WHERE p.stream_id = streams.id AND julianday(p.last_seen_at) > julianday('now', '-90 seconds')) AS listeners FROM streams ${whereSql} ORDER BY ${order} LIMIT ? OFFSET ?`,
     listBinds: [...binds, pageSize, offset],
     countSql: `SELECT COUNT(*) AS total FROM streams ${whereSql}`,
     countBinds: binds,

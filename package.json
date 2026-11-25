@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
+    "dev": "wrangler dev --port 8788",
     "db:migrate:local": "wrangler d1 migrations apply sparrow-radio-db --local",
     "db:seed:local": "wrangler d1 execute sparrow-radio-db --local --file=seed/dev.sql",
     "test": "vitest run",
@@ -20,6 +20,7 @@
     "wrangler": "^4.166.0"
   },
   "dependencies": {
+    "@noble/curves": "^2.4.0",
     "graphql": "^17.1.0",
     "graphql-yoga": "^6.1.0"
   }
